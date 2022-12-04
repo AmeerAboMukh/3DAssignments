@@ -140,17 +140,20 @@ void Scene::KeyCallback(Viewport* viewport, int x, int y, int key, int scancode,
                 break;
             case GLFW_KEY_SPACE:
 
-                NumberOFIter = std::ceil(0.1 * pickedModel->GetMesh()->OurDataMesh.SizeOFQ);
-                something_collapsed = pickedModel->GetMesh()->OurDataMesh.Our_simplification(NumberOFIter);
-                if (something_collapsed) {
-                    auto meshData = pickedModel->GetMesh()->data;
-                    auto ourMeshData = pickedModel->GetMesh()->OurDataMesh;
-                    pickedModel->GetMesh()->data.push_back(MeshData{ ourMeshData.V, ourMeshData.F, meshData[0].vertexNormals, meshData[0].textureCoords});
-                    pickedModel->SetMeshList({ pickedModel->GetMesh() });
-                    pickedModel->meshIndex = pickedModel->GetMesh()->data.size() - 1;
-                }
-                else {
-                    pickedModel->meshIndex = pickedModel->GetMesh()->data.size() - 1;
+                if (pickedModel)
+                {
+                    NumberOFIter = std::ceil(0.1 * pickedModel->GetMesh()->OurDataMesh.SizeOFQ);
+                    something_collapsed = pickedModel->GetMesh()->OurDataMesh.Our_simplification(NumberOFIter);
+                    if (something_collapsed) {
+                        auto meshData = pickedModel->GetMesh()->data;
+                        auto ourMeshData = pickedModel->GetMesh()->OurDataMesh;
+                        pickedModel->GetMesh()->data.push_back(MeshData{ ourMeshData.V, ourMeshData.F, meshData[0].vertexNormals, meshData[0].textureCoords });
+                        pickedModel->SetMeshList({ pickedModel->GetMesh() });
+                        pickedModel->meshIndex = pickedModel->GetMesh()->data.size() - 1;
+                    }
+                    else {
+                        pickedModel->meshIndex = pickedModel->GetMesh()->data.size() - 1;
+                    }
                 }
                 break;
             case GLFW_KEY_UP:
