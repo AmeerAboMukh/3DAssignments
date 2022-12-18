@@ -30,7 +30,7 @@ void Scene::Update(const Program& program, const Eigen::Matrix4f& proj, const Ei
 void Scene::MouseCallback(Viewport* viewport, int x, int y, int button, int action, int mods, int buttonState[])
 {
     // note: there's a (small) chance the button state here precedes the mouse press/release event
-
+   
     if (action == GLFW_PRESS) { // default mouse button press behavior
         PickVisitor visitor;
         visitor.Init();
@@ -63,6 +63,7 @@ void Scene::ScrollCallback(Viewport* viewport, int x, int y, int xoffset, int yo
 {
     // note: there's a (small) chance the button state here precedes the mouse press/release event
     auto system = camera->GetRotation().transpose();
+
     if (pickedModel) {
         pickedModel->TranslateInSystem(system, {0, 0, -float(yoffset)});
         pickedToutAtPress = pickedModel->GetTout();
@@ -111,14 +112,47 @@ void Scene::KeyCallback(Viewport* viewport, int x, int y, int key, int scancode,
     if (action == GLFW_PRESS || action == GLFW_REPEAT) {
         switch (key) // NOLINT(hicpp-multiway-paths-covered)
         {
+
             case GLFW_KEY_ESCAPE:
                 glfwSetWindowShouldClose(window, GLFW_TRUE);
                 break;
             case GLFW_KEY_LEFT:
-                camera->RotateInSystem(system, 0.1f, Axis::Y);
+                if (pickedModel)
+                {
+                    left = true;
+                    if (right||up||down) { collisions = false; }
+                    if (!collisions) {
+                        pickedModel->Translate(-0.005, Axis::X);
+                        bunny1->RemoveChild(cube3);
+                        bunny2->RemoveChild(cube4);
+                        stat = true;
+                    }
+                   
+                    right = false;
+                    up = false;
+                    down = false;
+                }
                 break;
             case GLFW_KEY_RIGHT:
-                camera->RotateInSystem(system, -0.1f, Axis::Y);
+                if (pickedModel)
+                {
+                    right = true;
+                    if (left||up||down) { collisions = false; }
+                    if (right && !collisions) {
+                        pickedModel->Translate(0.005, Axis::X);
+                        bunny1->RemoveChild(cube3);
+                        bunny2->RemoveChild(cube4);
+                        stat = true;
+                    }   
+                
+                    left = false;
+                    up = false;
+                    down = false;
+                }
+                break;
+            case GLFW_KEY_P:
+                moveLeftRight = moveLeftRight - 0.002;
+                right = true;
                 break;
             case GLFW_KEY_W:
                 camera->TranslateInSystem(system, {0, 0.05f, 0});
@@ -157,21 +191,62 @@ void Scene::KeyCallback(Viewport* viewport, int x, int y, int key, int scancode,
                 }
                 break;
             case GLFW_KEY_UP:
-                if (pickedModel->meshIndex >= pickedModel->GetMesh()->data.size() - 1) {
+              /*  if (pickedModel->meshIndex >= pickedModel->GetMesh()->data.size() - 1) {
                     pickedModel->meshIndex = pickedModel->GetMesh()->data.size() - 1;
                 }
                 else {
                     pickedModel->meshIndex++;
                 }
+                break;*/
+                if (pickedModel)
+                {
+                    up = true;
+                    if (down||right||left) { collisions = false; }
+                    if (up && !collisions) {
+                        pickedModel->Translate(0.005, Axis::Y);
+                        bunny1->RemoveChild(cube3);
+                        bunny2->RemoveChild(cube4);
+                        stat = true;
+                    }
+                   
+                    right = false;
+                    left = false;
+                    down = false;
+                }
+               // camera->RotateInSystem(system, 0.1f, Axis::X);
                 break;
+
             case GLFW_KEY_DOWN:
-                if (pickedModel->meshIndex <= 0 ) {
+               /* if (pickedModel->meshIndex <= 0) {
                     pickedModel->meshIndex = 0;
                 }
                 else {
                     pickedModel->meshIndex--;
                 }
+                break;*/
+                if (pickedModel)
+                {
+                    down = true;
+                    if (up||right||left) { collisions = false; }
+                    if (down && !collisions) {
+                        pickedModel->Translate(-0.005, Axis::Y);
+                        bunny1->RemoveChild(cube3);
+                        bunny2->RemoveChild(cube4);
+                        stat = true;
+                    }
+                   
+                    right = false;
+                    left = false;
+                    up = false;
+                }
+               // camera->RotateInSystem(system, -0.1f, Axis::X);
                 break;
+
+            case GLFW_KEY_RIGHT_SHIFT:
+                if (pickedModel)
+                {
+                    moveLeftRight = 0;
+                }
         }
     }
 }

@@ -39,6 +39,14 @@ public:
 
     std::shared_ptr<Model> pickedModel;
     std::shared_ptr<Camera> camera;
+    float moveLeftRight = 0;
+    bool stat = true;
+    bool left = false; 
+    bool right = false; 
+    bool up = false;
+    bool down = false;
+    bool collisions = false;
+    std::shared_ptr<cg3d::Model> bunny1, bunny2, cube3, cube4,cube1, cube2;
 
     virtual void MouseCallback(Viewport* viewport, int x, int y, int button, int action, int mods, int buttonState[]);
     virtual void ScrollCallback(Viewport* viewport, int x, int y, int xoffset, int yoffset, bool dragging, int buttonState[]);

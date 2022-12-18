@@ -32,3 +32,8 @@ add_subdirectory(Example1)
 
 
 add_subdirectory(simplification)
+
+
+
+
+add_subdirectory(CollisionDetection)
